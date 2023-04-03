@@ -1,6 +1,8 @@
 const { db, query } = require('../database')
 const bcrypt = require('bcrypt')
+const { validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
+const nodemailer = require("../middleware/nodemailer");
 
 module.exports = {
     register: async (req, res) => {
@@ -49,8 +51,18 @@ module.exports = {
         const salt = await bcrypt.genSalt(10)
         const hashPassword = await bcrypt.hash(password, salt)
 
-        let addUserQuery = `INSERT INTO users VALUES (null, ${db.escape(username)}, ${db.escape(email)}, ${db.escape(hashPassword)}, ${db.escape(name)}, false)`
+        let addUserQuery = `INSERT INTO users VALUES (null, ${db.escape(username)}, ${db.escape(email)}, ${db.escape(hashPassword)}, ${db.escape(name)}, false, null)`
         let addUserResult = await query(addUserQuery)
+
+        let mail = {
+            from: `Admin <ayyasluthfi@gmail.com>`,
+            to: `${email}`,
+            subject: `Acount Verification`,
+            html: `<p> Click here to verify your account</p>`,
+        };
+        let response = await nodemailer.sendMail(mail)
+        console.log(response)
+
         return res.status(200).send({ data: addUserResult, message: "Register success" })
 
 
@@ -59,7 +71,6 @@ module.exports = {
         // Kita response "Register Berhasil"
     },
     login: async (req, res) => {
-        console.log(req.body)
         // ambil user yang email = email dari body
 
         // cek apakah ada, kl gaada response email atau password salah

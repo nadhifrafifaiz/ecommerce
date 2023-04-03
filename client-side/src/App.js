@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import { checkLogin } from './features/users/usersSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from "react-redux";
+import FileUpload from './pages/FileUpload';
 
 function App() {
   const dispatch = useDispatch()
@@ -24,6 +25,7 @@ function App() {
     <div>
       <Navbar />
       <Routes>
+        <Route path="/" element={<FileUpload />} />
         <Route path="/users" element={<Users />} />
         {
           userGlobal.id === '' ?

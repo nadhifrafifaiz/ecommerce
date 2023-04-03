@@ -41,6 +41,7 @@ export function fetchUsersData() {
 
 export function registerUser(data) {
     return async (dispatch) => {
+        console.log("here")
         let response = await Axios.post("http://localhost:8001/auth", data);
         console.log(response)
         if (response) {
