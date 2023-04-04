@@ -1,6 +1,8 @@
 const { db, query }  = require('../database')
 const  bcrypt  = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const nodemailer = require('../helpers/nodemailer')
+const Mail = require('nodemailer/lib/mailer')
 
 module.exports = {
     register: async (req, res) => {
@@ -51,6 +53,16 @@ module.exports = {
 
         let addUserQuery = `INSERT INTO users VALUES (null, ${db.escape(username)}, ${db.escape(email)}, ${db.escape(hashPassword)}, ${db.escape(name)}, false)`
         let addUserResult = await query(addUserQuery)
+
+        let mail = {
+            from: `Admin <boysluggish@gmail.com>`,
+            to: `${email}`,
+            subject: `Acount Verification`,
+            html: `<p> Click here to verify your account</p>`
+        }
+
+        let response = await nodemailer.sendMail(mail)
+
         return res.status(200).send({ data: addUserResult, message: "Register success"})
 
 
