@@ -1,38 +1,42 @@
-import './App.css';
-import React, { useState, useEffect } from 'react'
-import { Routes, Route, Link } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Register from "./pages/Register";
-import Users from "./pages/Users";
+import React, { useEffect } from 'react'
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home';
+import UpdateProfile from './pages/UpdateProfile';
+import Navbar from './components/Navbar';
+import Register from './pages/Register';
 import Login from './pages/Login';
-import { checkLogin } from './features/users/usersSlice';
-import { useDispatch } from 'react-redux';
-import { useSelector } from "react-redux";
+import Verification from './pages/Verification';
+import { useDispatch, useSelector } from 'react-redux'
+import { checkLogin } from './features/user/userSlice';
+import Users from './pages/Users';
 
 function App() {
   const dispatch = useDispatch()
-  const userToken = localStorage.getItem("user_token")
-  const userGlobal = useSelector((state) => state.users.user);
-
+  const userToken = localStorage.getItem('user_token')
+  const userGlobal = useSelector((state) => state.user.user)
 
 
   useEffect(() => {
-    dispatch(checkLogin(userToken))
     // alert(userToken)
-  }, [])
+    dispatch(checkLogin(userToken))
+  })
+
 
   return (
     <div>
       <Navbar />
       <Routes>
-        <Route path="/users" element={<Users />} />
-        {
-          userGlobal.id ===''?
+        <Route path='/' element={<Home />} />
+        <Route path='/user/update-profile' element={<UpdateProfile />} />
+        <Route path='/user/verification/:token' element={<Verification />} />
+
+        {userGlobal.id > 0 ?
+          <Route path="/users" element={<Users />} />
+          :
           <>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} /></>
-          
-:null
+            <Route path='/user/register' element={<Register />} />
+            <Route path='/user/login' element={<Login />} />
+          </>
         }
       </Routes>
     </div>
